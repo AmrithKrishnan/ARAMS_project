@@ -2,7 +2,6 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
-from geometry_msgs.msg import Twist
 from cv_bridge import CvBridge
 import cv2 as cv
 import numpy as np
@@ -12,7 +11,6 @@ class MyNode(Node):
         super().__init__('traffic_light_detect')
         self.publisher_image = self.create_publisher(Image, '/output_opencv', 10)
         self.publisher_status = self.create_publisher(String, '/status_message', 10)
-        self.publisher_cmd_vel = self.create_publisher(Twist, '/cmd_vel', 10)
 
         self.subscription = self.create_subscription(Image, '/traffic_light_cropped', self.callback, 10)
 
@@ -93,20 +91,6 @@ class MyNode(Node):
 
         # Publish the ROS2 Image
         self.publisher_image.publish(ros_frame)
-
-        # Set cmd_vel based on detected traffic light color
-        twist_msg = Twist()
-        if flag == 2:  # Yellow
-            twist_msg.linear.x = 0.5  # Half speed
-            twist_msg.linear.y = 0.5
-            twist_msg.angular.z = 0.0  # No angular velocity
-        elif flag == 1:  # Red
-            twist_msg.linear.x = 0.0  # Stop
-            twist_msg.linear.y = 0.5
-            twist_msg.angular.z = 0.0  # No angular velocity
-
-        # Publish the cmd_vel message
-        self.publisher_cmd_vel.publish(twist_msg)
 
         # Publish the status message
         status_msg = String()

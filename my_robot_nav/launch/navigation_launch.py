@@ -105,7 +105,7 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings + [('prius/cmd_vel', 'cmd_vel_nav')]),
+                remappings=remappings + [('cmd_vel', 'cmd_vel_nav')]),
             Node(
                 package='nav2_smoother',
                 executable='smoother_server',
@@ -166,7 +166,7 @@ def generate_launch_description():
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
                 remappings=remappings +
-                        [('prius/cmd_vel', 'cmd_vel_nav'), ('cmd_vel_smoothed', 'prius/cmd_vel')]),
+                        [('cmd_vel', 'cmd_vel_nav'), ('cmd_vel_smoothed', '/prius/cmd_vel')]),
             Node(
                 package='nav2_lifecycle_manager',
                 executable='lifecycle_manager',
@@ -188,7 +188,7 @@ def generate_launch_description():
                 plugin='nav2_controller::ControllerServer',
                 name='controller_server',
                 parameters=[configured_params],
-                remappings=remappings + [('prius/cmd_vel', 'cmd_vel_nav')]),
+                remappings=remappings + [('cmd_vel', 'cmd_vel_nav')]),
             ComposableNode(
                 package='nav2_smoother',
                 plugin='nav2_smoother::SmootherServer',
@@ -225,7 +225,7 @@ def generate_launch_description():
                 name='velocity_smoother',
                 parameters=[configured_params],
                 remappings=remappings +
-                           [('prius/cmd_vel', 'cmd_vel_nav'), ('cmd_vel_smoothed', 'prius/cmd_vel')]),
+                           [('cmd_vel', 'cmd_vel_nav'), ('cmd_vel_smoothed', '/prius/cmd_vel')]),
             ComposableNode(
                 package='nav2_lifecycle_manager',
                 plugin='nav2_lifecycle_manager::LifecycleManager',

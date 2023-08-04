@@ -1,4 +1,6 @@
 from setuptools import setup
+import os
+from glob import glob
 
 package_name = 'my_robot_nav'
 
@@ -25,6 +27,7 @@ setup(
         'console_scripts': [
             'prius_cmd_vel_mirror = my_robot_nav.prius_cmd_vel_mirror:main',
             'prius_cmd_vel_traffic_light = my_robot_nav.prius_cmd_vel_traffic_light:main',
+            'auto_explorer = my_robot_nav.auto_explorer:main',
         ],
     },
 )

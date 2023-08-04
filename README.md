@@ -12,6 +12,8 @@ Structure:
 
         NODE prius_cmd_vel_traffic_light: based on traffic light color from /status_message, the /prius/cmd_vel is controlled. Red-stop, yellow-slow, green-drive
 
+        NODE auto_explorer: generates and sends 3 random navigation goals to prius based on a fixed set of 12 predefined coordinates, allowing the robot to navigate to these positions in a loop.
+
         LAUNCH localization.launch.yaml: localization related launch file
 
         LAUNCH navigation_launch.py: for navigation server

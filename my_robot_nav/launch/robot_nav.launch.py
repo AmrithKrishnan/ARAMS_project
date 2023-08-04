@@ -12,8 +12,9 @@ from launch.substitutions import LaunchConfiguration
 def generate_launch_description():
     # Get the launch directory
     bringup_dir = get_package_share_directory('nav2_bringup')
-    launch_dir = os.path.join(bringup_dir, 'launch')
-    config_dir = os.path.join((get_package_share_directory('my_robot_navigation')), 'config')
+    launch_dir = os.path.join((get_package_share_directory('my_robot_nav')), 'launch')
+    launch_dir_nav2_bringup = os.path.join(bringup_dir, 'launch')
+    config_dir = os.path.join((get_package_share_directory('my_robot_nav')), 'config')
 
     # Create the launch configuration variables
     use_sim_time = LaunchConfiguration('use_sim_time')
@@ -51,7 +52,7 @@ def generate_launch_description():
 
     # Specify the actions
     rviz_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(launch_dir, 'rviz_launch.py')),
+        PythonLaunchDescriptionSource(os.path.join(launch_dir_nav2_bringup, 'rviz_launch.py')),
         launch_arguments={'namespace': '',
                           'use_namespace': 'False',
                           'rviz_config': rviz_config_file}.items())

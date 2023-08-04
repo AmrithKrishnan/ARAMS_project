@@ -7,7 +7,7 @@ launch:
     param:
     -
       name: "yaml_filename"
-      value: "$(find-pkg-share my_robot_nav)/maps/my_map.yaml"
+      value: "$(find-pkg-share my_robot_slam)/maps/map.yaml"
     -
       name: "use_sim_time"
       value: True
@@ -18,11 +18,8 @@ launch:
     name: "amcl"
     param:
     -
-      name: "map_frame_id"
-      value: "map"
-    -
       name: "base_frame_id"
-      value: "chassis_link"
+      value: "base_link"
     -
       name: "odom_frame_id"
       value: "odom"
@@ -31,16 +28,25 @@ launch:
       value: "map"
     -
       name: "laser_max_range"
-      value: 10.0
+      value: 20.0
     -
       name: "scan_topic"
-      value: "/prius/ground_laser/scan"      
+      value: "/prius/merged/scan"      
     -
       name: "set_initial_pose"
       value: True
     -
-      name: "initial_pose"
-      value: [-36, 0.0, 0.0, 0.0]
+      name: "initial_pose.x"
+      value: -36.0
+    -
+      name: "initial_pose.y"
+      value: 0.0
+    -   
+      name: "initial_pose.z"
+      value: 0.0
+    -
+      name: "initial_pose.yaw"
+      value: 0.0     
     -
       name: "first_map_only"
       value: False

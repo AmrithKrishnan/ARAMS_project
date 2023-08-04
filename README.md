@@ -32,6 +32,6 @@ Structure:
 
 Run instructions:
 
-launch arams_city and spawn prius. Launch localization.launch.yaml and robot_nav.lauch.py . Then, run all three nodes from PKG img_proc and PKG yolo. Run node prius_cmd_vel_traffic_light from PKG my_robot_nav.
+launch arams_city and spawn prius. Launch localization.launch.yaml and robot_nav.lauch.py . Then, run all three nodes from PKG img_proc and PKG yolo. Run node prius_cmd_vel_traffic_light from PKG my_robot_nav. Run auto_explorer from PKG my_robot_nav for fully autonomous navigation, including sending goals.
 
 To test only nav2 (without traffic light following behavior), just launch localization.launch.yaml and robot_nav.launch.py. (and of course launch arams_city and spawn prius before hand)

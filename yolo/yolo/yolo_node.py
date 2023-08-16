@@ -1,6 +1,5 @@
 import os
 import cv2
-import numpy as np
 import rclpy
 from rclpy.node import Node
 from cv_bridge import CvBridge
@@ -25,6 +24,9 @@ class TrafficLightDetector(Node):
         weights_file = os.path.abspath(os.path.join(package_path, 'data', 'weights', 'yolov4-tiny.weights'))
         config_file = os.path.abspath(os.path.join(package_path, 'data', 'cfg', 'yolov4-tiny.cfg'))
 
+        print("Weights file path:", weights_file)
+        print("Config file path:", config_file)
+
         if not os.path.exists(weights_file):
             print("ERROR: weights file not found.")
         if not os.path.exists(config_file):
@@ -37,9 +39,9 @@ class TrafficLightDetector(Node):
 
         # Load YOLO model
         self.net = cv2.dnn_DetectionModel(config_file, weights_file)
-        self.net.setInputSize(320, 128)
-        self.net.setInputScale(1.0 / 255)
-        self.net.setInputSwapRB(True)
+        self.net.setInputSize(320, 128)  # Set the input size (width, height) for the YOLO model. have to be multiples of 32
+        self.net.setInputScale(1.0 / 255)  # Set the input scale for the YOLO model
+        self.net.setInputSwapRB(True)  # Set to True to swap Blue and Red channels (OpenCV uses BGR by default)
 
     def image_callback(self, msg):
         # Convert the Image message to an OpenCV image with rgb8 encoding
@@ -50,29 +52,22 @@ class TrafficLightDetector(Node):
 
         # Process YOLO detections
         traffic_light_crops = []
-        has_traffic_light = False  # Track if traffic light is detected
         for class_id, score, box in zip(classes, scores, boxes):
             if self.classes[class_id] == 'traffic light':
                 x, y, w, h = box
                 traffic_light_crop = cv_image[y:y+h, x:x+w]
                 traffic_light_crops.append(traffic_light_crop)
-                has_traffic_light = True
 
+            # Check for the class 'truck' and publish '1' if found
             if self.classes[class_id] == 'truck':
                 truck_status_msg = String()
                 truck_status_msg.data = "1"
                 self.truck_publisher.publish(truck_status_msg)
 
-        if not has_traffic_light:
-            # Publish an all-black image if no traffic light is detected
-            blank_image = np.zeros_like(cv_image)
-            ros_frame = self.bridge.cv2_to_imgmsg(blank_image, encoding="passthrough")
+        # Publish the cropped images
+        for idx, traffic_light_crop in enumerate(traffic_light_crops):
+            ros_frame = self.bridge.cv2_to_imgmsg(traffic_light_crop, encoding="passthrough")
             self.publisher.publish(ros_frame)
-        else:
-            # Publish the cropped images
-            for idx, traffic_light_crop in enumerate(traffic_light_crops):
-                ros_frame = self.bridge.cv2_to_imgmsg(traffic_light_crop, encoding="passthrough")
-                self.publisher.publish(ros_frame)
 
 def main(args=None):
     rclpy.init(args=args)

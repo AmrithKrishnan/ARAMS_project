@@ -1,0 +1,40 @@
+# Autonomous Driving in ARAMS-City - ROS2 Project Report
+
+## Abstract
+The Autonomous Driving project in ARAMS-City utilizes ROS2 and various ROS packages to enable a Prius car to navigate autonomously in a virtual city environment. The project focuses on functionalities such as traffic light detection, traffic light following behavior, and autonomous exploration using predefined coordinates. This report details the key components, implementation, and outcomes of the project.
+
+## Introduction
+The project aims to create an autonomous driving solution for a Prius car in the ARAMS-City virtual environment. The solution leverages ROS2's capabilities, including image processing, navigation, and control, to enable the Prius to navigate safely, follow traffic lights, and explore the city autonomously.
+
+## Components and Nodes
+
+### PKG img_proc
+- **crop_raw_img**: This node takes raw images from the /prius/front_camera/image_raw topic, crops the top right corner for traffic light detection using YOLO, and publishes the cropped image to /traffic_light_roi.
+- **traffic_light_detect**: This node processes the cropped images of traffic lights obtained from YOLO on the /traffic_light_cropped topic. It detects the color of traffic lights and sends the status over /status_message. The processed image is also published to /output_opencv for visualization on RVIZ.
+
+### PKG my_robot_nav
+- **prius_cmd_vel_mirror**: This node mirrors twist messages from /cmd_vel to /prius/cmd_vel, facilitating debugging and testing of the navigation stack (nav2).
+- **prius_cmd_vel_traffic_light**: Based on the traffic light color obtained from /status_message, this node controls the /prius/cmd_vel. It stops the Prius at a red light, slows down at a yellow light, and accelerates at a green light.
+- **auto_explorer**: This node generates and sends 3 random navigation goals to the Prius based on a fixed set of 12 predefined coordinates. It enables the robot to navigate to these positions sequentially for autonomous exploration.
+
+### PKG yolo
+- **yolo_node**: This node detects traffic lights in the image topic /traffic_light_roi, crops the image based on bounding box coordinates, and sends the cropped image over /traffic_light_cropped. Additionally, it detects fire trucks and sends a '1' over the topic /truck_status when detected.
+
+## Configuration and Launch Files
+- **nav2_params.yaml**: Contains navigation-related parameters used by the nav2 stack.
+- **localization.launch.yaml**: Launch file for localization-related components.
+- **navigation_launch.py**: Launch file for the navigation server.
+- **robot_nav.launch.py**: Main launch file for navigation. It includes navigation_launch.py and loads the param file nav2_params.yaml.
+- **my_map.pgm and my_map.yaml**: Map files for the primary map used in the ARAMS-City environment.
+- **my_map1.pgm and my_map1.yaml**: Alternate map files used for navigation.
+
+## Run Instructions
+1. Launch the ARAMS-City environment and spawn the Prius car.
+2. Launch localization.launch.yaml and robot_nav.launch.py to enable the navigation stack.
+3. Run all three nodes from PKG img_proc and PKG yolo to enable traffic light detection and processing.
+4. Run node prius_cmd_vel_traffic_light from PKG my_robot_nav to enable traffic light following behavior.
+5. Run auto_explorer from PKG my_robot_nav to initiate fully autonomous navigation with predefined goals.
+
+## Conclusion
+The Autonomous Driving project in ARAMS-City successfully demonstrates an autonomous navigation solution for the Prius car. Leveraging ROS2 and a combination of image processing, navigation, and control components, the Prius is capable of autonomously exploring the city, detecting traffic lights, and responding appropriately to traffic signals. The project lays a solid foundation for further advancements and applications in autonomous driving technologies.
+

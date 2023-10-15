@@ -1,5 +1,7 @@
-ROS2 files for Autonomous driving, completed as part of ARAMS course project.
-Prerequisites: arams-city files, nav2 assosciated files and other ros2 dependencies
+The scope of this project is to drive a car autonomoulsy in a simulated environment. This was developed as part of the coursework for Autonomous Mobile Robotic System - Master Mechatronics at FH Aachen.  
+
+Prerequisites: ROS@, arams-city files (virtual city - accessible via ili.fh-aachen.de) , nav2 assosciated files and other ros2 dependencies
+The following is a brief description of the packages / nodes used:
 
 Structure:
 

@@ -1,42 +1,68 @@
-The scope of this project is to drive a car autonomoulsy in a simulated environment. This was developed as part of the coursework for Autonomous Mobile Robotic System - Master Mechatronics at FH Aachen.  
+# Autonomous Car Control in Simulated Environment (ROS2)
 
-Prerequisites: ROS@, arams-city files (virtual city - accessible via ili.fh-aachen.de) , nav2 assosciated files and other ros2 dependencies
-The following is a brief description of the packages / nodes used:
+This project aims to drive a car autonomously in a simulated environment. It was developed as part of the coursework for the Autonomous Mobile Robotic System at FH Aachen, Master Mechatronics program.
 
-Structure:
+## Prerequisites
 
-    PKG img_proc
+To use this project, ensure you have the following:
 
-        NODE crop_raw_img : takes raw img from /prius/front_camera/image_raw and crops the top right corner part for yolo (traffic ight detection). publishes to the topic /traffic_light_roi
+- ROS2 installation
+- 'arams-city' files for the virtual city (accessible via ili.fh-aachen.de)
+- Navigation2 (nav2) and its associated ROS2 dependencies
 
-        NODE traffic_light_detect: gets the image of traffic light from yolo on topic /traffic_light_cropped, does processing to find the color of traffic light and sends status over the topic /status_message. The processed image is also sent over the topic /output_opencv to view on rviz
+## Project Structure
 
-    PKG my_robot_nav
+### Package: img_proc
 
-        NODE prius_cmd_vel_mirror: mirrors twist messages from /cmd_vel to /prius/cmd_vel. Used for debugging and testing nav2
+#### Nodes:
 
-        NODE prius_cmd_vel_traffic_light: based on traffic light color from /status_message, the /prius/cmd_vel is controlled. Red light-stop, yellow-slow speed, green-drive
+- **crop_raw_img:** Obtains raw images from `/prius/front_camera/image_raw`, crops the top right corner for YOLO (traffic light detection), and publishes to `/traffic_light_roi`.
+  
+- **traffic_light_detect:** Receives the cropped image from YOLO via the topic `/traffic_light_cropped`, processes to identify traffic light colors, and sends status over `/status_message`. The processed image is also available for visualization on RViz through the topic `/output_opencv`.
 
-        NODE auto_explorer: generates and sends 3 random navigation goals to prius based on a fixed set of 12 predefined coordinates, allowing the robot to navigate to these positions in sequence.
+### Package: my_robot_nav
 
-        CONFIG nav2_params.yaml: navigation parameters file
+#### Nodes:
 
-        LAUNCH localization.launch.yaml: localization related launch file
+- **prius_cmd_vel_mirror:** Mirrors twist messages from `/cmd_vel` to `/prius/cmd_vel`. Useful for debugging and testing nav2.
 
-        LAUNCH navigation_launch.py: for navigation server
+- **prius_cmd_vel_traffic_light:** Controls `/prius/cmd_vel` based on the traffic light color received from `/status_message`. Red light means stop, yellow indicates slow speed, and green allows the car to proceed.
+  
+- **auto_explorer:** Generates and sends three random navigation goals to the Prius using a set of 12 predefined coordinates. This allows the robot to navigate to these positions sequentially.
 
-        LAUNCH robot_nav.launch.py: launch file for navigation, it also links navigation_launch.py and the param file nav2_params.yaml
+#### Configuration and Launch Files:
 
-        MAPS my_map.pgm and my_map.yaml: map files
+- `nav2_params.yaml`: Navigation parameters file.
+- `localization.launch.yaml`: Localization-related launch file.
+- `navigation_launch.py`: Launch file for the navigation server.
+- `robot_nav.launch.py`: Launch file that links navigation_launch.py and the parameter file nav2_params.yaml.
 
-        MAPS my_map1.pgm and my_map1.yaml: alternate map files
+#### Maps:
 
-    PKG yolo
+- `my_map.pgm` and `my_map.yaml`: Primary map files.
+- `my_map1.pgm` and `my_map1.yaml`: Alternate map files.
 
-        NODE yolo_node: detects traffic lights on the image topic /traffic_light_roi, crops the image as per its bounding box and sends over the topic /traffic_light_cropped. also detects fire trucks and sends '1' over topic /truck_status when detected.
+### Package: yolo
 
-Run instructions:
+#### Nodes:
 
-launch arams_city and spawn prius. Launch localization.launch.yaml and robot_nav.lauch.py . Then, run all three nodes from PKG img_proc and PKG yolo. Run node prius_cmd_vel_traffic_light from PKG my_robot_nav. Run auto_explorer from PKG my_robot_nav for fully autonomous navigation, including sending goals.
+- **yolo_node:** Detects traffic lights on the image topic `/traffic_light_roi`, crops the image as per its bounding box, and sends it over the topic `/traffic_light_cropped`. Additionally, it detects fire trucks and sends '1' over topic `/truck_status` when detected.
 
-To test only nav2 (without traffic light following behavior), just launch localization.launch.yaml and robot_nav.launch.py. (and of course launch arams_city and spawn prius before hand)
+## Run Instructions
+
+Follow these steps to run the project:
+
+1. Launch 'arams_city' and spawn the Prius.
+2. Launch `localization.launch.yaml` and `robot_nav.launch.py`.
+3. Run all three nodes from `img_proc` and `yolo` packages.
+4. Execute the `prius_cmd_vel_traffic_light` node from the `my_robot_nav` package.
+5. For fully autonomous navigation, including sending goals, run the `auto_explorer` node from the `my_robot_nav` package.
+
+### Testing Navigation without Traffic Light Behavior
+
+To test only the nav2 functionality without the traffic light following behavior, follow these steps:
+
+1. Launch `localization.launch.yaml` and `robot_nav.launch.py`.
+2. (Ensure 'arams_city' is launched and the Prius is spawned.)
+
+Feel free to modify these instructions according to your specific setup or any changes in the project's structure or dependencies.
